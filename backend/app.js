@@ -59,6 +59,7 @@ app.post('/api/clientes', (req, res, next) => {
 
 app.get('/api/clientes', (req, res, next) => {
   Cliente.find().then((documents) => {
+    console.log(documents)
     res.json({
       mensagem: "Tudo OK",
       clientes: documents
