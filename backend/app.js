@@ -6,6 +6,9 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Cliente = require('./models/cliente');
 
+app.use(bodyParser.json());
+app.use(cors())
+
 const {
   MONGODB_USER,
   MONGODB_PASSWORD,
@@ -20,31 +23,6 @@ mongoose.connect(`mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_CL
 }).catch(()=>{
   console.log("Conexão N OK")
 });
-app.use(bodyParser.json());
-
-const clientes = [
-  {
-    id: '1',
-    nome: 'José',
-    fone: '11223344',
-    email: 'jose@email.com'
-  },
-  {
-    id:'2',
-    nome: 'Jaqueline',
-    fone: '22112211',
-    email: 'jaqueline@email.com'
-  }
-]
-
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', "*");
-//   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
-//   next();
-// })
-
-app.use(cors())
 
 app.post('/api/clientes', (req, res, next) => {
   const cliente = new Cliente({
@@ -57,7 +35,7 @@ app.post('/api/clientes', (req, res, next) => {
   res.status(201).json({mensagem: 'Cliente inserido'});
 });
 
-app.get('/api/clientes', (req, res, next) => {
+app.get('/api/clientes', (req, res) => {
   Cliente.find().then((documents) => {
     console.log(documents)
     res.json({
@@ -66,5 +44,12 @@ app.get('/api/clientes', (req, res, next) => {
     })
   })
 });
+
+app.delete('/api/clientes/:id', (req,res) => {
+  Cliente.deleteOne({_id: req.params.id}).then(resultado => {
+    console.log(resultado)
+    res.status(200).json({mensagem: "Cliente Removido!"})
+  })
+})
 
 module.exports = app;
